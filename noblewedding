@@ -3,27 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Noble Wedding</title>
+  <title>Noble Wedding 회원 등록</title>
   <style>
     body {
-      font-family: 'Pretendard', sans-serif;
-      background-color: #fafafa;
+      margin: 0;
+      font-family: "Noto Sans KR", sans-serif;
+      background-color: #f9f6f2;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      background-color: #000;
+      color: #f9f6f2;
       text-align: center;
-      margin-top: 100px;
+      padding: 2rem 0;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
-    h1 {
-      font-size: 2.5em;
-      color: #8b5cf6;
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
-    p {
-      font-size: 1.2em;
-      color: #666;
+
+    .form-container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #111;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      background-color: #c5a572;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #b38b5f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 25px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>💍 Noble Wedding</h1>
-  <p>품격 있는 만남을 위한 시작, Noble Wedding에 오신 것을 환영합니다.</p>
+  <header>Noble Wedding</header>
+
+  <main>
+    <div class="form-container">
+      <h2>회원 등록 신청</h2>
+      <form id="registerForm">
+        <label>이름</label>
+        <input type="text" name="name" required>
+
+        <label>생년월일</label>
+        <input type="text" name="birth" placeholder="YYYY-MM-DD" required>
+
+        <label>성별</label>
+        <select name="gender" required>
+          <option value="">선택</option>
+          <option value="남성">남성</option>
+          <option value="여성">여성</option>
+        </select>
+
+        <label>직업</label>
+        <input type="text" name="job" required>
+
+        <label>거주지</label>
+        <input type="text" name="location" required>
+
+        <label>휴대폰 번호</label>
+        <input type="tel" name="phone" placeholder="010-0000-0000" required>
+
+        <label>신분증 업로드</label>
+        <input type="file" name="idcard" accept="image/*,.pdf">
+
+        <label>가족관계증명서</label>
+        <input type="file" name="family" accept="image/*,.pdf">
+
+        <label>졸업증명서</label>
+        <input type="file" name="graduate" accept="image/*,.pdf">
+
+        <label>재직증명서</label>
+        <input type="file" name="employment" accept="image/*,.pdf">
+
+        <label>자격증</label>
+        <input type="file" name="certificate" accept="image/*,.pdf">
+
+        <label>재산 관련 서류</label>
+        <input type="file" name="asset" accept="image/*,.pdf">
+
+        <button type="submit">제출하기</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>© 2025 Noble Wedding. All rights reserved.</footer>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("제출이 완료되었습니다. (현재는 시범 페이지입니다)");
+    });
+  </script>
 </body>
 </html>
