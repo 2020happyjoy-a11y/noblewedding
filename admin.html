@@ -92,6 +92,26 @@ async function loadMembers() {
 
 loadMembers();
 </script>
+<!-- Firebase 불러오기 코드 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAfWFEYCDB9UQ-NktaR-CkjQGXOxPc6IMY",
+    authDomain: "noble-wedding.firebaseapp.com",
+    projectId: "noble-wedding",
+    storageBucket: "noble-wedding.firebasestorage.app",
+    messagingSenderId: "242816725640",
+    appId: "1:242816725640:web:abc5dcfce08367789a653d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  console.log("관리자 페이지: Firebase 연결 성공!");
+</script>
 
 </body>
 </html>
+
