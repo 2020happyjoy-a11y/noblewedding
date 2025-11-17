@@ -1,145 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>운영자 페이지 - 회원 리스트</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f5f5f5;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .member-list {
-            width: 100%;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .member {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-
-        .member:last-child {
-            border-bottom: none;
-        }
-
-        .download-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #0078ff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .download-btn:hover {
-            background: #005fcc;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <title>운영자 페이지 - Noble Wedding</title>
 </head>
+
 <body>
+    <h1>운영자 페이지 (Admin)</h1>
+    <p>회원이 업로드한 정보를 불러오는 테스트 페이지입니다.</p>
 
-<h1>운영자 페이지</h1>
+    <div id="memberList"></div>
 
-<div class="member-list" id="memberList">
-    <h2>회원 목록</h2>
-    <p>현재 등록된 회원 데이터를 불러오는 중...</p>
-</div>
+    <!-- ---------------------------
+         Firebase 연결 코드
+    ---------------------------- -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
-// GitHub Pages에서 index2.html이 올린 데이터를 저장한 JSON 파일을 불러온다고 가정
-// 나중에 실제 업로드 시스템을 만들면 이 부분을 연결할거야!
+      const firebaseConfig = {
+        apiKey: "AIzaSyAfWFEYCDB9UQ-NktaR-CkjQGXOxPc6IMY",
+        authDomain: "noble-wedding.firebaseapp.com",
+        projectId: "noble-wedding",
+        storageBucket: "noble-wedding.firebasestorage.app",
+        messagingSenderId: "242816725640",
+        appId: "1:242816725640:web:abc5dcfce08367789a653d"
+      };
 
-async function loadMembers() {
-    const container = document.getElementById("memberList");
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
-    try {
-        // 예시용 JSON 경로 (나중에 실제 파일로 바뀜)
-        const response = await fetch("members.json");
-        const members = await response.json();
+      console.log("관리자 페이지: Firebase 연결 성공!");
+    </script>
 
-        container.innerHTML = "<h2>회원 목록</h2>";
 
-        members.forEach(m => {
-            container.innerHTML += `
-                <div class="member">
-                    <p><strong>이름:</strong> ${m.name}</p>
-                    <p><strong>나이:</strong> ${m.age}</p>
-                    <p><strong>거주지:</strong> ${m.location}</p>
-                    <a class="download-btn" href="${m.file}" download>
-                        제출 파일 다운로드
-                    </a>
-                </div>
-            `;
+    <!-- ---------------------------
+         Firestore 회원 리스트 불러오기
+    ---------------------------- -->
+    <script type="module">
+      import { getDocs, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const db = getFirestore();
+
+      async function loadMembers() {
+        const membersCol = collection(db, "members");
+        const memberSnapshot = await getDocs(membersCol);
+
+        let html = "<h2>회원 리스트</h2>";
+
+        memberSnapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `
+            <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
+              <strong>이름:</strong> ${data.name} <br>
+              <strong>소개:</strong> ${data.intro}
+            </div>
+          `;
         });
 
-    } catch (e) {
-        container.innerHTML = "<p>회원 정보를 불러오지 못했습니다.</p>";
-    }
-}
+        document.getElementById("memberList").innerHTML = html;
+      }
 
-loadMembers();
-</script>
-<!-- Firebase 불러오기 코드 -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAfWFEYCDB9UQ-NktaR-CkjQGXOxPc6IMY",
-    authDomain: "noble-wedding.firebaseapp.com",
-    projectId: "noble-wedding",
-    storageBucket: "noble-wedding.firebasestorage.app",
-    messagingSenderId: "242816725640",
-    appId: "1:242816725640:web:abc5dcfce08367789a653d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  console.log("관리자 페이지: Firebase 연결 성공!");
-</script>
-<script type="module">
-  import { getDocs, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const db = getFirestore();
-
-  async function loadMembers() {
-    const membersCol = collection(db, "members");
-    const memberSnapshot = await getDocs(membersCol);
-
-    let listHtml = "<h2>회원 리스트</h2>";
-
-    memberSnapshot.forEach((doc) => {
-      const data = doc.data();
-      listHtml += `
-        <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
-          <strong>이름:</strong> ${data.name} <br>
-          <strong>소개:</strong> ${data.intro}
-        </div>
-      `;
-    });
-
-    document.body.innerHTML += listHtml;
-  }
-
-  loadMembers();
-</script>
+      loadMembers();
+    </script>
 
 </body>
 </html>
-
-
