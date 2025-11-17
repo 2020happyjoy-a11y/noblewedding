@@ -111,7 +111,35 @@ loadMembers();
 
   console.log("관리자 페이지: Firebase 연결 성공!");
 </script>
+<script type="module">
+  import { getDocs, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const db = getFirestore();
+
+  async function loadMembers() {
+    const membersCol = collection(db, "members");
+    const memberSnapshot = await getDocs(membersCol);
+
+    let listHtml = "<h2>회원 리스트</h2>";
+
+    memberSnapshot.forEach((doc) => {
+      const data = doc.data();
+      listHtml += `
+        <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
+          <strong>이름:</strong> ${data.name} <br>
+          <strong>소개:</strong> ${data.intro}
+        </div>
+      `;
+    });
+
+    document.body.innerHTML += listHtml;
+  }
+
+  loadMembers();
+</script>
 
 </body>
 </html>
+
 
