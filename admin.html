@@ -1,69 +1,89 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
     <meta charset="UTF-8" />
-    <title>운영자 페이지 - Noble Wedding</title>
+    <title>운영자 페이지</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .member-box {
+            border: 1px solid #aaa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>운영자 페이지 (Admin)</h1>
-    <p>회원이 업로드한 정보를 불러오는 테스트 페이지입니다.</p>
+    <h2>📋 회원 리스트 (Firestore에서 불러오기)</h2>
 
-    <div id="memberList"></div>
+    <div id="memberList">
+        <p>⏳ 불러오는 중...</p>
+    </div>
 
-    <!-- ---------------------------
-         Firebase 연결 코드
-    ---------------------------- -->
+    <!-- Firebase SDK -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyAfWFEYCDB9UQ-NktaR-CkjQGXOxPc6IMY",
-        authDomain: "noble-wedding.firebaseapp.com",
-        projectId: "noble-wedding",
-        storageBucket: "noble-wedding.firebasestorage.app",
-        messagingSenderId: "242816725640",
-        appId: "1:242816725640:web:abc5dcfce08367789a653d"
-      };
+        // 🔹 Firebase 설정 (정은의 프로젝트 설정)
+        const firebaseConfig = {
+          apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+          authDomain: "noble-wedding.firebaseapp.com",
+          projectId: "noble-wedding",
+          storageBucket: "noble-wedding.firebasestorage.app",
+          messagingSenderId: "242816725640",
+          appId: "1:242816725640:web:abc5dcfce08367789a653d"
+        };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+        // 🔹 Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-      console.log("관리자 페이지: Firebase 연결 성공!");
+        // 🔹 Firestore에서 members 데이터 읽어오기
+        async function loadMembers() {
+            const listBox = document.getElementById("memberList");
+            listBox.innerHTML = "<p>⏳ 불러오는 중...</p>";
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "members"));
+
+                if (querySnapshot.empty) {
+                    listBox.innerHTML = "<p>등록된 회원이 아직 없습니다.</p>";
+                    return;
+                }
+
+                listBox.innerHTML = ""; // 리스트 초기화
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const box = document.createElement("div");
+                    box.className = "member-box";
+
+                    box.innerHTML = `
+                        <strong>이름:</strong> ${data.name} <br>
+                        <strong>소개:</strong> ${data.intro || "소개 없음"} <br>
+                        <small style="color:#888;">ID: ${doc.id}</small>
+                    `;
+
+                    listBox.appendChild(box);
+                });
+
+            } catch (error) {
+                console.error("데이터 불러오기 실패:", error);
+                listBox.innerHTML = "<p style='color:red;'>데이터 불러오기 실패!</p>";
+            }
+        }
+
+        // 화면 열리면 자동 실행
+        loadMembers();
     </script>
-
-
-    <!-- ---------------------------
-         Firestore 회원 리스트 불러오기
-    ---------------------------- -->
-    <script type="module">
-      import { getDocs, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-      const db = getFirestore();
-
-      async function loadMembers() {
-        const membersCol = collection(db, "members");
-        const memberSnapshot = await getDocs(membersCol);
-
-        let html = "<h2>회원 리스트</h2>";
-
-        memberSnapshot.forEach((doc) => {
-          const data = doc.data();
-          html += `
-            <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
-              <strong>이름:</strong> ${data.name} <br>
-              <strong>소개:</strong> ${data.intro}
-            </div>
-          `;
-        });
-
-        document.getElementById("memberList").innerHTML = html;
-      }
-
-      loadMembers();
-    </script>
-
 </body>
 </html>
