@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>회원 정보 업로드 페이지</title>
+</head>
+
+<body>
+    <h2>회원 정보 업로드</h2>
+
+    <!-- 입력 폼 -->
+    <label>이름:</label><br>
+    <input type="text" id="nameInput" /><br><br>
+
+    <label>간단한 소개:</label><br>
+    <textarea id="introInput" rows="4" cols="40"></textarea><br><br>
+
+    <button id="saveBtn">저장하기</button>
+
+    <p id="resultText" style="color: green;"></p>
+
+    <!-- Firebase 스크립트 -->
+    <script type="module">
+        // Firebase SDK import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase 설정 (이미 너가 만든 프로젝트)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfWFEYCDB9UQ-NktaR-CkjQGXOxPc6IMY",
+            authDomain: "noble-wedding.firebaseapp.com",
+            projectId: "noble-wedding",
+            storageBucket: "noble-wedding.firebasestorage.app",
+            messagingSenderId: "242816725640",
+            appId: "1:242816725640:web:abc5dcfce08367789a653d"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        console.log("Firebase 연결 성공!");
+
+        // 저장 버튼 클릭시 Firestore 저장
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+
+            const nameValue = document.getElementById("nameInput").value;
+            const introValue = document.getElementById("introInput").value;
+
+            if (nameValue.trim() === "") {
+                alert("이름은 반드시 입력해야 합니다!");
+                return;
+            }
+
+            try {
+                // Firestore에 데이터 저장
+                await addDoc(collection(db, "members"), {
+                    name: nameValue,
+                    intro: introValue,
+                    createdAt: new Date()
+                });
+
+                console.log("Firestore 저장 성공!");
+                document.getElementById("resultText").innerText = "저장이 완료되었습니다!";
+
+                // 입력창 초기화
+                document.getElementById("nameInput").value = "";
+                document.getElementById("introInput").value = "";
+
+            } catch (error) {
+                console.error("Firestore 저장 실패:", error);
+                alert("저장 중 오류가 발생했습니다!");
+            }
+        });
+
+    </script>
+</body>
+</html>
