@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 리스트 - 관리자</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select, button, input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .member-box {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        .member-box:hover {
+            background: #eef3ff;
+        }
+    </style>
+</head>
+<body>
+
+<h1>회원 리스트</h1>
+
+<div class="container">
+
+    <!-- 🔹 필터 영역 -->
+    <div class="filters">
+        <!-- 성별 -->
+        <select id="genderFilter">
+            <option value="">성별 전체</option>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
+        </select>
+
+        <!-- 나이 -->
+        <select id="ageFilter">
+            <option value="">나이 전체</option>
+            <option value="20">20대</option>
+            <option value="30">30대</option>
+            <option value="40">40대</option>
+            <option value="50">50대</option>
+        </select>
+
+        <!-- 키 -->
+        <select id="heightFilter">
+            <option value="">키 전체</option>
+            <option value="160">160cm 이상</option>
+            <option value="170">170cm 이상</option>
+            <option value="180">180cm 이상</option>
+        </select>
+
+        <!-- 지역 -->
+        <input id="regionFilter" type="text" placeholder="지역 입력 (예: 서울)" />
+
+        <!-- 필터 적용 버튼 -->
+        <button onclick="applyFilters()">필터 적용</button>
+    </div>
+
+    <!-- 🔹 회원 리스트 박스 -->
+    <div id="memberList">
+        <p>불러오는 중...</p>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { 
+        initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import { 
+        getFirestore, collection, getDocs, query, where 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 🔹 Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+      authDomain: "noble-wedding.firebaseapp.com",
+      projectId: "noble-wedding",
+      storageBucket: "noble-wedding.firebasestorage.app",
+      messagingSenderId: "242816725640",
+      appId: "1:242816725640:web:abc5dcfce08367789a653d"
+    };
+
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+
+    // 🔹 회원 목록 불러오기 함수
+    async function loadMembers(filters = {}) {
+        const listBox = document.getElementById("memberList");
+        listBox.innerHTML = "<p>불러오는 중...</p>";
+
+        try {
+            let q = collection(db, "members");
+
+            // 🔸 성별 필터
+            if (filters.gender) {
+                q = query(q, where("gender", "==", filters.gender));
+            }
+
+            // 🔸 나이 필터 (20/30/40/50대 구간)
+            if (filters.age) {
+                const minAge = Number(filters.age);
+                const maxAge = minAge + 9;
+                q = query(q, where("age", ">=", minAge), where("age", "<=", maxAge));
+            }
+
+            // 🔸 키 필터 (160 이상 / 170 이상 / 180 이상)
+            if (filters.height) {
+                q = query(q, where("height", ">=", Number(filters.height)));
+            }
+
+            // 🔸 지역 필터 (문자 포함 검색 X / 완벽 일치만 가능)
+            if (filters.region) {
+                q = query(q, where("region", "==", filters.region));
+            }
+
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                listBox.innerHTML = "<p>조건에 맞는 회원이 없습니다.</p>";
+                return;
+            }
+
+            listBox.innerHTML = "";
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+
+                const box = document.createElement("div");
+                box.className = "member-box";
+
+                // 클릭 시 상세페이지로 이동
+                box.onclick = () => {
+                    window.location.href = `members.html?id=${doc.id}`;
+                };
+
+                box.innerHTML = `
+                    <strong>${data.name}</strong><br>
+                    성별: ${data.gender || "?"}<br>
+                    나이: ${data.age || "?"}세<br>
+                    키: ${data.height || "?"}cm<br>
+                    지역: ${data.region || "?"}<br>
+                    소개: ${data.intro || ""}
+                `;
+
+                listBox.appendChild(box);
+            });
+
+        } catch (err) {
+            console.error(err);
+            listBox.innerHTML = "<p style='color:red;'>데이터를 불러오는 중 오류 발생</p>";
+        }
+    }
+
+    // 🔹 필터 적용 버튼
+    function applyFilters() {
+        const gender = document.getElementById("genderFilter").value;
+        const age = document.getElementById("ageFilter").value;
+        const height = document.getElementById("heightFilter").value;
+        const region = document.getElementById("regionFilter").value.trim();
+
+        loadMembers({
+            gender,
+            age,
+            height,
+            region
+        });
+    }
+
+    // 🔹 첫 로딩 시 전체 회원 보여주기
+    loadMembers();
+
+</script>
+
+</body>
+</html>
+
