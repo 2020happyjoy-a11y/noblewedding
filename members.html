@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>회원 상세 보기</title>
+  <style>
+    body{font-family:system-ui,"Noto Sans KR",sans-serif;background:#f6f6f8;margin:0;padding:20px}
+    .wrap{max-width:900px;margin:0 auto}
+    .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 10px 20px rgba(20,20,30,0.06)}
+    .row{display:flex;gap:12px;align-items:center}
+    .label{width:120px;color:#666}
+    .thumb{width:160px;height:160px;border-radius:8px;background:#fafafa;border:1px solid #eee;display:flex;align-items:center;justify-content:center}
+    .actions{margin-top:12px;display:flex;gap:8px}
+    button{padding:8px 12px;border-radius:8px;border:0;background:#2b6cff;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>회원 상세</h1>
+    <div id="content" class="card">
+      <p>데이터를 불러오는 중...</p>
+    </div>
+    <div style="margin-top:12px">
+      <button onclick="history.back()">목록으로</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+      authDomain: "noble-wedding.firebaseapp.com",
+      projectId: "noble-wedding",
+      storageBucket: "noble-wedding.firebasestorage.app",
+      messagingSenderId: "242816725640",
+      appId: "1:242816725640:web:abc5dcfce08367789a653d",
+      measurementId: "G-67MYW2RRSJ"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    async function loadMember(){
+      const el = document.getElementById('content');
+      el.innerHTML = '<p>불러오는 중...</p>';
+      if(!id){ el.innerHTML = '<p>잘못된 접근: ID 없음</p>'; return; }
+      try{
+        const ref = doc(db,'members', id);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){ el.innerHTML = '<p>회원 정보를 찾을 수 없습니다.</p>'; return; }
+        const m = snap.data();
+
+        // 간단 출력 (원하는 항목 추가 가능)
+        el.innerHTML = `
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="flex:0 0 180px">
+              <div class="thumb">
+                ${(m.photos && m.photos[0]) ? `<img src="${m.photos[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:6px">` : '<span>사진없음</span>'}
+              </div>
+            </div>
+            <div style="flex:1">
+              <div class="row"><div class="label">이름</div><div>${escapeHtml(m.name || '')}</div></div>
+              <div class="row"><div class="label">생년월일</div><div>${escapeHtml(m.birth || '')}</div></div>
+              <div class="row"><div class="label">성별</div><div>${escapeHtml(m.gender || '')}</div></div>
+              <div class="row"><div class="label">직업</div><div>${escapeHtml(m.job || '')}</div></div>
+              <div class="row"><div class="label">거주지</div><div>${escapeHtml(m.address || '')}</div></div>
+              <div class="row"><div class="label">연봉</div><div>${m.income?escapeHtml(String(m.income)) + '만원' : '-'}</div></div>
+              <div style="margin-top:12px"><div class="label">자기소개</div><div>${escapeHtml(m.intro || '')}</div></div>
+              <div style="margin-top:12px"><div class="label">서류 제출</div><div>${m.familyDoc || m.marriageDoc ? '있음 (관리자 다운로드 필요)' : '없음'}</div></div>
+              <div class="actions">
+                <button onclick="window.location.href='mailto:?'">연락</button>
+                <button onclick="window.open(window.location.href)">새창열기</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }catch(e){
+        console.error(e);
+        document.getElementById('content').innerHTML = '<p>오류가 발생했습니다.</p>';
+      }
+    }
+
+    function escapeHtml(s){ if(s===undefined||s===null) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+    loadMember();
+  </script>
+</body>
+</html>
