@@ -1,89 +1,346 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>운영자 페이지</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        h2 {
-            color: #333;
-        }
-        .member-box {
-            border: 1px solid #aaa;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>관리자 대시보드 - 회원 관리</title>
+  <style>
+    :root{ --bg:#f6f6f8; --card:#fff; --accent:#2b6cff; --muted:#666; --radius:10px; }
+    body{font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);margin:0;padding:20px;}
+    .wrap{max-width:1100px;margin:0 auto;}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    h1{margin:0;font-size:20px}
+    .card{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(20,20,30,0.06);}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .filters select, .filters input{padding:8px;border-radius:8px;border:1px solid #ddd}
+    .member-list{margin-top:12px}
+    .member-card{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:8px;border:1px solid #eee;background:#fff;margin-bottom:10px}
+    .thumb{width:72px;height:72px;border-radius:8px;background:#fafafa;border:1px solid #eee;flex:0 0 72px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+    .m-info{flex:1}
+    .m-actions{display:flex;gap:8px;align-items:center}
+    button{cursor:pointer;padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff}
+    .ghost{background:#eef2ff;color:var(--accent);border:0}
+    .small{padding:6px 10px;font-size:0.95rem}
+    .summary{display:flex;gap:12px}
+    .summary .s-item{flex:1;padding:12px;border-radius:8px;background:#fff;text-align:center}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.35)}
+    .modal .inner{width:720px;max-width:95%;background:#fff;padding:16px;border-radius:10px}
+    .row{display:flex;gap:8px;align-items:center}
+    label.small{font-size:0.9rem;color:var(--muted);min-width:80px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f3f4f6;margin-right:6px;color:#333;font-size:0.9rem}
+    .topbar{display:flex;gap:8px;align-items:center}
+    .count{font-weight:800;font-size:18px}
+    .search{flex:1}
+    input[type="range"]{width:160px}
+  </style>
 </head>
-
 <body>
-    <h2>📋 회원 리스트 (Firestore에서 불러오기)</h2>
+  <div class="wrap">
+    <header>
+      <h1>관리자 대시보드 — 회원 관리</h1>
+      <div class="topbar">
+        <div class="pill">총 회원: <span id="totalCount">0</span></div>
+        <div class="pill">남성: <span id="maleCount">0</span></div>
+        <div class="pill">여성: <span id="femaleCount">0</span></div>
+      </div>
+    </header>
 
-    <div id="memberList">
-        <p>⏳ 불러오는 중...</p>
+    <div class="card">
+      <div class="summary" id="summaryRow">
+        <div class="s-item">
+          <div style="font-size:28px" id="newToday">0</div>
+          <div style="color:var(--muted)">오늘 등록</div>
+        </div>
+        <div class="s-item">
+          <div style="font-size:28px" id="pendingProposals">0</div>
+          <div style="color:var(--muted)">대기 제안</div>
+        </div>
+        <div class="s-item">
+          <div style="font-size:28px" id="matchable">0</div>
+          <div style="color:var(--muted)">매칭 후보</div>
+        </div>
+        <div class="s-item">
+          <div style="font-size:28px" id="avgIncome">-</div>
+          <div style="color:var(--muted)">평균 연봉(대략)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="card">
+        <div class="filters">
+          <select id="filterGender"><option value="">성별 전체</option><option value="남성">남성</option><option value="여성">여성</option></select>
+          <select id="filterAge"><option value="">나이 전체</option><option value="20-29">20-29</option><option value="30-39">30-39</option><option value="40-49">40-49</option></select>
+          <select id="filterIncome"><option value="">연봉 전체</option><option value="0-3000">~3000</option><option value="3000-5000">3000-5000</option><option value="5000-10000">5000~</option></select>
+          <select id="filterProperty"><option value="">부동산 유무</option><option value="true">있음</option><option value="false">없음</option></select>
+          <input id="searchText" class="search" placeholder="이름 / 직업 키워드 검색" />
+          <button id="btnReset" class="ghost small">초기화</button>
+          <button id="btnRefresh" class="small">새로고침</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <div id="memberList" class="member-list">
+            <p style="color:var(--muted)">회원 데이터를 불러오는 중...</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <!-- Modal: 제안 보내기 -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="inner card">
+      <h3>매칭 제안 만들기</h3>
+      <div style="margin-top:10px">
+        <div class="row"><label class="small">제안자</label><div id="modalProposer" style="font-weight:700"></div></div>
+        <div class="row"><label class="small">대상</label><div id="modalTarget" style="font-weight:700"></div></div>
+        <div style="margin-top:8px">
+          <label class="small">제안 대상 후보 선택</label>
+          <select id="candidateSelect" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd"></select>
+        </div>
+        <div style="margin-top:12px">
+          <label class="small">메모(관리자용)</label>
+          <textarea id="proposalNote" style="width:100%;min-height:80px;padding:8px;border-radius:8px;border:1px solid #ddd"></textarea>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button id="btnCreateProposal">제안 생성</button>
+          <button id="btnCloseModal" class="ghost">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        // 🔹 Firebase 설정 (정은의 프로젝트 설정)
-        const firebaseConfig = {
-          apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
-          authDomain: "noble-wedding.firebaseapp.com",
-          projectId: "noble-wedding",
-          storageBucket: "noble-wedding.firebasestorage.app",
-          messagingSenderId: "242816725640",
-          appId: "1:242816725640:web:abc5dcfce08367789a653d"
-        };
+  <!-- Firebase (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, where, Timestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // 🔹 Firebase 초기화
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+      authDomain: "noble-wedding.firebaseapp.com",
+      projectId: "noble-wedding",
+      storageBucket: "noble-wedding.firebasestorage.app",
+      messagingSenderId: "242816725640",
+      appId: "1:242816725640:web:abc5dcfce08367789a653d",
+      measurementId: "G-67MYW2RRSJ"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        // 🔹 Firestore에서 members 데이터 읽어오기
-        async function loadMembers() {
-            const listBox = document.getElementById("memberList");
-            listBox.innerHTML = "<p>⏳ 불러오는 중...</p>";
+    // 전역 데이터 캐시
+    let MEMBERS = []; // 불러온 회원 전체
 
-            try {
-                const querySnapshot = await getDocs(collection(db, "members"));
+    // 요소
+    const memberListEl = document.getElementById('memberList');
+    const filterGender = document.getElementById('filterGender');
+    const filterAge = document.getElementById('filterAge');
+    const filterIncome = document.getElementById('filterIncome');
+    const filterProperty = document.getElementById('filterProperty');
+    const searchText = document.getElementById('searchText');
+    const btnReset = document.getElementById('btnReset');
+    const btnRefresh = document.getElementById('btnRefresh');
 
-                if (querySnapshot.empty) {
-                    listBox.innerHTML = "<p>등록된 회원이 아직 없습니다.</p>";
-                    return;
-                }
+    const modal = document.getElementById('modal');
+    const modalProposer = document.getElementById('modalProposer');
+    const modalTarget = document.getElementById('modalTarget');
+    const candidateSelect = document.getElementById('candidateSelect');
+    const proposalNote = document.getElementById('proposalNote');
+    const btnCreateProposal = document.getElementById('btnCreateProposal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
 
-                listBox.innerHTML = ""; // 리스트 초기화
+    // 요약 요소
+    const totalCount = document.getElementById('totalCount');
+    const maleCount = document.getElementById('maleCount');
+    const femaleCount = document.getElementById('femaleCount');
+    const newToday = document.getElementById('newToday');
+    const pendingProposals = document.getElementById('pendingProposals');
+    const matchable = document.getElementById('matchable');
+    const avgIncome = document.getElementById('avgIncome');
 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const box = document.createElement("div");
-                    box.className = "member-box";
+    // 초기 로드
+    async function loadAllMembers(){
+      memberListEl.innerHTML = `<p style="color:var(--muted)">회원 데이터를 불러오는 중...</p>`;
+      MEMBERS = [];
+      try{
+        const q = query(collection(db,'members'), orderBy('createdAt','desc'));
+        const snap = await getDocs(q);
+        snap.forEach(d => {
+          const data = d.data();
+          data._id = d.id;
+          MEMBERS.push(data);
+        });
+        renderSummary();
+        renderList();
+      }catch(e){
+        memberListEl.innerHTML = `<p style="color:red">데이터를 불러오지 못했습니다.</p>`;
+        console.error(e);
+      }
+    }
 
-                    box.innerHTML = `
-                        <strong>이름:</strong> ${data.name} <br>
-                        <strong>소개:</strong> ${data.intro || "소개 없음"} <br>
-                        <small style="color:#888;">ID: ${doc.id}</small>
-                    `;
+    function renderSummary(){
+      totalCount.innerText = MEMBERS.length;
+      maleCount.innerText = MEMBERS.filter(m=>m.gender==='남성').length;
+      femaleCount.innerText = MEMBERS.filter(m=>m.gender==='여성').length;
+      const today = new Date(); today.setHours(0,0,0,0);
+      newToday.innerText = MEMBERS.filter(m=>{
+        if(!m.createdAt) return false;
+        const t = (m.createdAt.seconds) ? m.createdAt.toDate() : new Date(m.createdAt);
+        return t >= today;
+      }).length;
+      // pending proposals (simple count from separate collection)
+      // avg income simple calc
+      const incomes = MEMBERS.map(m=>Number(m.income || 0)).filter(x=>x>0);
+      avgIncome.innerText = incomes.length? Math.round(incomes.reduce((a,b)=>a+b,0)/incomes.length) + '만원' : '-';
+    }
 
-                    listBox.appendChild(box);
-                });
+    function renderList(filtered){
+      const list = filtered || MEMBERS;
+      if(list.length===0){
+        memberListEl.innerHTML = `<p style="color:var(--muted)">조건에 맞는 회원이 없습니다.</p>`;
+        return;
+      }
+      memberListEl.innerHTML = '';
+      list.forEach(m=>{
+        const div = document.createElement('div');
+        div.className = 'member-card';
+        const thumb = `<div class="thumb">${(m.photos && m.photos[0])? `<img src="${m.photos[0]}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">` : '<span>사진없음</span>'}</div>`;
+        div.innerHTML = `
+          ${thumb}
+          <div class="m-info">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div>
+                <div style="font-weight:800">${escapeHtml(m.name || '이름없음')}</div>
+                <div style="color:var(--muted);font-size:0.95rem">${escapeHtml(m.job || '')} · ${calcAge(m.birth || '')}세</div>
+              </div>
+              <div class="m-actions">
+                <button class="ghost small" data-id="${m._id}" onclick="viewDetail(event)">상세</button>
+                <button data-id="${m._id}" class="small" onclick="openProposal(event)">제안</button>
+              </div>
+            </div>
+            <div style="margin-top:8px;color:#333">${escapeHtml((m.intro||'').slice(0,120))}${(m.intro && m.intro.length>120)?'...':''}</div>
+            <div style="margin-top:8px;font-size:0.92rem;color:var(--muted)">
+              연봉: ${m.income?escapeHtml(String(m.income)) + '만원' : '미기입'} · 부동산: ${m.property? '있음' : '없음'} · 학력: ${m.degree || '-'}
+            </div>
+          </div>
+        `;
+        memberListEl.appendChild(div);
+      });
+    }
 
-            } catch (error) {
-                console.error("데이터 불러오기 실패:", error);
-                listBox.innerHTML = "<p style='color:red;'>데이터 불러오기 실패!</p>";
-            }
-        }
+    // 유틸
+    function escapeHtml(s){
+      if(s===undefined || s===null) return '';
+      return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    }
+    function calcAge(birth){
+      if(!birth) return '-';
+      const y = Number((birth||'').slice(0,4));
+      if(!y) return '-';
+      const now = new Date().getFullYear();
+      return now - y;
+    }
 
-        // 화면 열리면 자동 실행
-        loadMembers();
-    </script>
+    // 필터링
+    function applyFilters(){
+      let result = MEMBERS.slice();
+      const g = filterGender.value;
+      const age = filterAge.value;
+      const inc = filterIncome.value;
+      const prop = filterProperty.value;
+      const q = searchText.value.trim().toLowerCase();
+
+      if(g) result = result.filter(m=> (m.gender||'') === g);
+      if(age){
+        const [a,b] = age.split('-').map(Number);
+        result = result.filter(m=>{
+          const ag = Number(calcAge(m.birth));
+          return ag>=a && ag<=b;
+        });
+      }
+      if(inc){
+        const [min,max] = inc.split('-').map(Number);
+        result = result.filter(m=>{
+          const val = Number(m.income||0);
+          if(max) return val>=min && val<max;
+          return val>=min;
+        });
+      }
+      if(prop){
+        result = result.filter(m=> String(Boolean(m.property)) === prop);
+      }
+      if(q){
+        result = result.filter(m=>{
+          const hay = ((m.name||'') + ' ' + (m.job||'') + ' ' + (m.intro||'')).toLowerCase();
+          return hay.indexOf(q) !== -1;
+        });
+      }
+      renderList(result);
+    }
+
+    btnReset.addEventListener('click', ()=>{
+      filterGender.value='';filterAge.value='';filterIncome.value='';filterProperty.value='';searchText.value='';
+      renderList(MEMBERS);
+    });
+    btnRefresh.addEventListener('click', ()=> loadAllMembers());
+    filterGender.addEventListener('change', applyFilters);
+    filterAge.addEventListener('change', applyFilters);
+    filterIncome.addEventListener('change', applyFilters);
+    filterProperty.addEventListener('change', applyFilters);
+    searchText.addEventListener('input', applyFilters);
+
+    // 상세보기 이동
+    window.viewDetail = (e) => {
+      const id = e.target.dataset.id;
+      window.location.href = `member.html?id=${id}`;
+    };
+
+    // 제안 모달 열기
+    let currentProposer=null;
+    window.openProposal = (e) => {
+      const id = e.target.dataset.id;
+      currentProposer = id;
+      modalProposer.innerText = '운영자';
+      modalTarget.innerText = MEMBERS.find(x=>x._id===id)?.name || id;
+      // 후보 목록 (다른 성별 또는 전체 중 선택 가능) -> 여기선 반대 성별 우선
+      candidateSelect.innerHTML = '<option value="">선택하세요</option>';
+      const proposer = MEMBERS.find(x=>x._id===id);
+      const candidates = MEMBERS.filter(x=> x._id !== id && (x.gender !== proposer.gender));
+      candidates.forEach(c=>{
+        const opt = document.createElement('option');
+        opt.value = c._id;
+        opt.text = `${c.name || '이름없음'} · ${c.job || ''} · ${calcAge(c.birth)|| '-'}세`;
+        candidateSelect.appendChild(opt);
+      });
+      modal.style.display='flex'; modal.setAttribute('aria-hidden','false');
+    };
+
+    btnCloseModal.addEventListener('click', ()=>{
+      modal.style.display='none'; modal.setAttribute('aria-hidden','true');
+    });
+
+    // 프로포절 생성
+    btnCreateProposal.addEventListener('click', async ()=>{
+      const candidateId = candidateSelect.value;
+      if(!candidateId){ alert('후보를 선택하세요'); return; }
+      const note = proposalNote.value.trim();
+      try{
+        await addDoc(collection(db,'proposals'), {
+          proposerId: currentProposer,
+          candidateId,
+          proposerRole: 'admin',
+          status: 'pending',
+          note,
+          createdAt: Timestamp.now()
+        });
+        alert('제안이 생성되었습니다.');
+        modal.style.display='none'; modal.setAttribute('aria-hidden','true');
+      }catch(e){
+        console.error(e); alert('제안 생성 실패');
+      }
+    });
+
+    // 초기 실행
+    loadAllMembers();
+
+  </script>
 </body>
 </html>
