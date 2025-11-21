@@ -1,351 +1,132 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>노블웨딩 | 회원 등록 신청</title>
-  <meta name="description" content="노블웨딩 회원 등록 신청 폼 - 신원 및 서류 업로드" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 정보 업로드</title>
+
   <style>
-    :root{
-      --page-bg: #fbf8f5;
-      --card-bg: #ffffff;
-      --section-bg: #fff8f2;
-      --text: #222;
-      --muted: #6f6f6f;
-      --gold: #d4af37;
-      --gold-dark: #b8962d;
-      --input-border: #e7e3dd;
-      --radius: 12px;
-      --max-width: 980px;
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px;
+      border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    input, textarea, select {
+      width: 100%; padding: 10px; margin-bottom: 12px;
+      border-radius: 6px; border: 1px solid #ccc;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: "Noto Sans KR", "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--page-bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      padding:36px 18px;
-      line-height:1.6;
-    }
-    .wrap{max-width:var(--max-width);margin:0 auto;}
-    header{ text-align:center;margin-bottom:6px; }
-    h1{ margin:0;font-size:26px;font-weight:800;color:#2b2b2b; }
-
-    .title-art{display:flex;justify-content:center;margin:12px 0 20px;}
-    .title-art svg{ width:160px;height:auto; display:block; }
-
-    .card{background:var(--card-bg);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(10,10,10,0.06);}
-
-    form{display:block;}
-
-    .section{background:var(--section-bg);border-radius:10px;padding:18px 18px 22px;margin-bottom:18px;}
-    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-    .section-title{font-weight:700;font-size:16px;color:var(--text);margin:0;}
-    .gold-line{height:3px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:3px}
-
-    label{display:block;font-weight:600;margin:8px 0 6px;color:var(--text);font-size:0.95rem;}
-    .muted{color:var(--muted);font-size:0.92rem;margin-bottom:8px;display:block;}
-
-    input[type="text"], select, input[type="file"], textarea {
-      width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--input-border);background:#fff;font-size:1rem;
-    }
-    textarea{min-height:80px;resize:vertical}
-
-    .profile-photos{display:flex;gap:12px;align-items:center}
-    .photo-box{flex:1;display:flex;flex-direction:column;gap:8px}
-    .photo-thumb{width:120px;height:120px;border-radius:8px;border:3px solid var(--gold);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-    .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .photo-input{flex:1}
-
-    .file-row{display:flex;gap:12px}
-    .file-box{flex:1}
-    .file-group{display:flex;flex-direction:column;gap:10px}
-
-    .note{font-size:0.92rem;color:var(--muted);margin-top:6px}
-    .actions{margin-top:10px}
-    button[type="submit"]{width:100%;padding:14px;border-radius:10px;background:var(--gold);border:0;color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
-    button[type="submit"]:hover{background:var(--gold-dark)}
-
-    @media (max-width:900px){
-      .profile-photos{flex-direction:row;flex-wrap:nowrap}
-      .file-row{flex-direction:column}
-      .photo-thumb{width:96px;height:96px}
+    button {
+      width: 100%; padding: 12px; background: #2b6cff; color: white;
+      border: none; border-radius: 8px; font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>회원 등록 신청</h1>
-    </header>
 
-    <div class="title-art" aria-hidden="true">
-      <!-- 간단한 SVG 장식 -->
-      <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="웨딩 커플 실루엣">
-        <g transform="translate(10,8)" stroke="#D4AF37" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 70 C18 52 28 38 48 38 C68 38 78 52 76 70"></path>
-          <path d="M30 36 C30 22 42 12 48 12 C54 12 66 22 66 36"></path>
-        </g>
-      </svg>
-    </div>
+<div class="container">
+  <h2>회원 정보 업로드</h2>
 
-    <div class="card">
-      <form id="regForm" enctype="multipart/form-data" novalidate>
-        <!-- 기본정보 -->
-        <section class="section" aria-labelledby="sec-basic">
-          <div class="section-header">
-            <h3 id="sec-basic" class="section-title">기본정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
+  <label>이름</label>
+  <input type="text" id="name">
 
-          <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px">
-            <div class="photo-box" style="flex:0 0 140px">
-              <div class="photo-thumb" id="profileThumb">
-                <img id="profilePreview" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="프로필 미리보기">
-              </div>
-              <div class="note">※ 첫 번째 사진이 미리보기로 표시됩니다.</div>
-            </div>
+  <label>성별</label>
+  <select id="gender">
+    <option value="">선택하세요</option>
+    <option value="남성">남성</option>
+    <option value="여성">여성</option>
+  </select>
 
-            <div style="flex:1">
-              <label>프로필 사진 (3장)</label>
-              <div class="profile-photos">
-                <div class="photo-input"><input id="profile1" type="file" accept="image/*"></div>
-                <div class="photo-input"><input id="profile2" type="file" accept="image/*"></div>
-                <div class="photo-input"><input id="profile3" type="file" accept="image/*"></div>
-              </div>
-            </div>
-          </div>
+  <label>나이</label>
+  <input type="number" id="age">
 
-          <label for="name">이름</label>
-          <input id="name" type="text" placeholder="이름을 입력하세요" required>
+  <label>키(cm)</label>
+  <input type="number" id="height">
 
-          <label for="birth">생년월일 (YYYY-MM-DD)</label>
-          <input id="birth" type="text" placeholder="예: 1990-05-12" maxlength="10" required>
+  <label>지역</label>
+  <input type="text" id="region">
 
-          <label for="gender">성별</label>
-          <select id="gender" required>
-            <option value="">선택하세요</option>
-            <option value="남성">남성</option>
-            <option value="여성">여성</option>
-          </select>
+  <label>자기소개</label>
+  <textarea id="intro" rows="4"></textarea>
 
-          <label for="job">직업</label>
-          <input id="job" type="text" placeholder="직업을 입력하세요">
+  <label>증빙 서류 업로드 (이미지 또는 PDF)</label>
+  <input type="file" id="docFile" />
 
-          <label for="address">거주지</label>
-          <input id="address" type="text" placeholder="예: 서울특별시 강남구">
+  <button id="saveBtn">저장하기</button>
 
-          <label for="phone">휴대폰 번호</label>
-          <input id="phone" type="text" placeholder="010-0000-0000" maxlength="13" required>
-        </section>
+  <p id="result" style="margin-top:12px; font-weight:bold;"></p>
+</div>
 
-        <!-- 신분정보 -->
-        <section class="section" aria-labelledby="sec-id">
-          <div class="section-header">
-            <h3 id="sec-id" class="section-title">신분정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytes, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-          <label for="familyDoc">가족관계증명서</label>
-          <span class="muted">가족관계증명서 (상세, 정부24 발급)</span>
-          <div class="file-group">
-            <input id="familyDoc" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
+  // 🔹 정은님이 주신 Firebase 설정값
+  const firebaseConfig = {
+    apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+    authDomain: "noble-wedding.firebaseapp.com",
+    projectId: "noble-wedding",
+    storageBucket: "noble-wedding.firebasestorage.app",
+    messagingSenderId: "242816725640",
+    appId: "1:242816725640:web:abc5dcfce08367789a653d",
+    measurementId: "G-67MYW2RRSJ"
+  };
 
-          <label for="marriageDoc">혼인관계증명서</label>
-          <span class="muted">혼인관계증명서 (상세, 정부24 발급)</span>
-          <div class="file-group">
-            <input id="marriageDoc" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-          <label for="graduateDocs">졸업증명서 (예: 학사, 석사, 박사, 유학증명서 등)</label>
-          <span class="muted">졸업증명서 예시: 학사 / 석사 / 박사 / 유학증명서 등</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="grad1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="grad2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="grad3" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
-        </section>
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    const result = document.getElementById("result");
+    result.innerText = "저장 중...";
 
-        <!-- 재산정보 -->
-        <section class="section" aria-labelledby="sec-asset">
-          <div class="section-header">
-            <h3 id="sec-asset" class="section-title">재산정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
+    const name = document.getElementById("name").value.trim();
+    const gender = document.getElementById("gender").value;
+    const age = document.getElementById("age").value;
+    const height = document.getElementById("height").value;
+    const region = document.getElementById("region").value.trim();
+    const intro = document.getElementById("intro").value;
+    const file = document.getElementById("docFile").files[0];
 
-          <label>소득 관련 서류</label>
-          <span class="muted">원천징수영수증 또는 과세표준증명서 제출 (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-group" style="margin-top:8px">
-            <input id="income1" type="file" accept=".pdf,.jpg,.png,.jpeg">
-            <input id="income2" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
+    if (!name) return alert("이름은 필수입니다!");
 
-          <label style="margin-top:12px">부동산 보유시 (등기부등본)</label>
-          <span class="muted">등기사항전부증명서 - 공동담보·매매목록·요약 포함 (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="prop1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="prop2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="prop3" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
+    let fileUrl = "";
 
-          <label style="margin-top:12px">차량 보유시 (차량등록원부)</label>
-          <span class="muted">(2개 이상일 경우 각각 첨부)</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="car1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="car2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
-
-          <label style="margin-top:12px">기타 경제력 관련 서류</label>
-          <span class="muted">보유 자산 증빙 자료 (현금성 자산 등은 잔액 및 예금주 확인이 가능한 증빙자료 제출) (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-group" style="margin-top:8px">
-            <input id="other1" type="file" accept=".pdf,.jpg,.png,.jpeg">
-            <input id="other2" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
-        </section>
-
-        <div class="actions">
-          <button type="submit" id="submitBtn">제출하기</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Firebase (modular SDK) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-    // --- Firebase 설정 (정은님 정보) ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
-      authDomain: "noble-wedding.firebaseapp.com",
-      projectId: "noble-wedding",
-      storageBucket: "noble-wedding.firebasestorage.app",
-      messagingSenderId: "242816725640",
-      appId: "1:242816725640:web:abc5dcfce08367789a653d",
-      measurementId: "G-67MYW2RRSJ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    // 유틸: 파일 업로드 (있으면 업로드 → URL 반환, 없으면 null)
-    async function uploadFileIfExists(inputElem, storagePathPrefix) {
-      const f = inputElem && inputElem.files && inputElem.files[0];
-      if(!f) return null;
-      const safeName = f.name.replace(/\s/g,'_');
-      const fileRef = sRef(storage, `${storagePathPrefix}/${Date.now()}_${safeName}`);
-      await uploadBytes(fileRef, f);
-      const url = await getDownloadURL(fileRef);
-      return url;
-    }
-
-    // 다중 파일 업로드 (배열 반환; 빈 슬롯은 null)
-    async function uploadMultiple(inputsArray, storagePathPrefix) {
-      const urls = [];
-      for (const inp of inputsArray) {
-        const f = inp && inp.files && inp.files[0];
-        if(!f) { urls.push(null); continue; }
-        const safeName = f.name.replace(/\s/g,'_');
-        const fileRef = sRef(storage, `${storagePathPrefix}/${Date.now()}_${safeName}`);
-        await uploadBytes(fileRef, f);
-        const url = await getDownloadURL(fileRef);
-        urls.push(url);
+    try {
+      // 🔹 1) 파일 있으면 Storage에 업로드
+      if (file) {
+        const fileRef = ref(storage, `documents/${Date.now()}_${file.name}`);
+        await uploadBytes(fileRef, file);
+        fileUrl = await getDownloadURL(fileRef);
       }
-      return urls;
+
+      // 🔹 2) Firestore 저장
+      await addDoc(collection(db, "members"), {
+        name,
+        gender,
+        age: Number(age),
+        height: Number(height),
+        region,
+        intro,
+        docUrl: fileUrl,
+        createdAt: new Date()
+      });
+
+      result.innerText = "저장이 완료되었습니다!";
+
+      document.getElementById("name").value = "";
+      document.getElementById("intro").value = "";
+      document.getElementById("docFile").value = "";
+
+    } catch (err) {
+      console.error(err);
+      result.innerText = "오류 발생: 저장 실패";
     }
+  });
+</script>
 
-    // 프로필 1 미리보기
-    document.getElementById('profile1').addEventListener('change', function(e){
-      const f = e.target.files && e.target.files[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = function(ev){ document.getElementById('profilePreview').src = ev.target.result; };
-      reader.readAsDataURL(f);
-    });
-
-    // 제출 핸들러
-    document.getElementById('regForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '저장 중...';
-
-      try {
-        // 기본 필드
-        const name = document.getElementById('name').value.trim();
-        if(!name){ alert('이름을 입력해주세요'); submitBtn.disabled=false; submitBtn.textContent='제출하기'; return; }
-        const birth = document.getElementById('birth').value.trim();
-        const gender = document.getElementById('gender').value;
-        const job = document.getElementById('job').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-
-        // 파일 업로드: photos (3장)
-        const photos = await uploadMultiple(
-          [document.getElementById('profile1'), document.getElementById('profile2'), document.getElementById('profile3')],
-          `members/${name.replace(/\s/g,'_')}/photos`
-        );
-
-        // 신분/졸업 서류
-        const familyDocUrl = await uploadFileIfExists(document.getElementById('familyDoc'), `members/${name.replace(/\s/g,'_')}/docs`);
-        const marriageDocUrl = await uploadFileIfExists(document.getElementById('marriageDoc'), `members/${name.replace(/\s/g,'_')}/docs`);
-        const gradDocs = await uploadMultiple([document.getElementById('grad1'), document.getElementById('grad2'), document.getElementById('grad3')], `members/${name.replace(/\s/g,'_')}/docs`);
-
-        // 재산 관련
-        const incomeDocs = await uploadMultiple([document.getElementById('income1'), document.getElementById('income2')], `members/${name.replace(/\s/g,'_')}/asset`);
-        const propDocs = await uploadMultiple([document.getElementById('prop1'), document.getElementById('prop2'), document.getElementById('prop3')], `members/${name.replace(/\s/g,'_')}/asset`);
-        const carDocs = await uploadMultiple([document.getElementById('car1'), document.getElementById('car2')], `members/${name.replace(/\s/g,'_')}/asset`);
-        const otherDocs = await uploadMultiple([document.getElementById('other1'), document.getElementById('other2')], `members/${name.replace(/\s/g,'_')}/asset`);
-
-        // Firestore에 저장
-        const docRef = await addDoc(collection(db, "members"), {
-          name, birth, gender, job, address, phone,
-          photos,
-          familyDoc: familyDocUrl || null,
-          marriageDoc: marriageDocUrl || null,
-          gradDocs,
-          incomeDocs,
-          propDocs,
-          carDocs,
-          otherDocs,
-          status: "submitted",
-          createdAt: serverTimestamp()
-        });
-
-        alert('저장되었습니다. (ID: ' + docRef.id + ')');
-
-        // 초기화
-        document.getElementById('regForm').reset();
-        document.getElementById('profilePreview').src = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-      } catch (err) {
-        console.error(err);
-        alert('저장 중 오류가 발생했습니다. 콘솔을 확인해 주세요.');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '제출하기';
-      }
-    });
-
-    // 입력 포맷(생년월일/전화)
-    function formatBirth(val){
-      const digits = val.replace(/\D/g,'').slice(0,8);
-      if(digits.length <=4) return digits;
-      if(digits.length <=6) return digits.slice(0,4) + '-' + digits.slice(4);
-      return digits.slice(0,4) + '-' + digits.slice(4,6) + '-' + digits.slice(6,8);
-    }
-    function formatPhone(val){
-      const digits = val.replace(/\D/g,'').slice(0,11);
-      if(digits.length <=3) return digits;
-      if(digits.length <=7) return digits.slice(0,3) + '-' + digits.slice(3);
-      return digits.slice(0,3) + '-' + digits.slice(3,7) + '-' + digits.slice(7,11);
-    }
-    document.getElementById('birth').addEventListener('input', function(e){ this.value = formatBirth(this.value); }, false);
-    document.getElementById('phone').addEventListener('input', function(e){ this.value = formatPhone(this.value); }, false);
-  </script>
 </body>
 </html>
