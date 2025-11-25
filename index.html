@@ -1,487 +1,77 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>노블웨딩 | 회원 등록 신청</title>
-  <meta name="description" content="노블웨딩 회원 등록 신청 폼 - 신원 및 서류 업로드" />
-  <style>
-    :root{
-      --page-bg: #fbf8f5;
-      --card-bg: #ffffff;
-      --section-bg: #fff8f2;
-      --text: #222;
-      --muted: #6f6f6f;
-      --gold: #d4af37;
-      --gold-dark: #b8962d;
-      --input-border: #e7e3dd;
-      --radius: 12px;
-      --max-width: 980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: "Noto Sans KR", "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--page-bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      padding:36px 18px;
-      line-height:1.6;
-    }
-    .wrap{max-width:var(--max-width);margin:0 auto;}
-    header{ text-align:center;margin-bottom:6px; }
-    h1{ margin:0;font-size:26px;font-weight:800;color:#2b2b2b; }
-    .title-art{display:flex;justify-content:center;margin:12px 0 20px;}
-    .title-art svg{ width:160px;height:auto; display:block; }
-    .card{background:var(--card-bg);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(10,10,10,0.06);}
-    form{display:block;}
-    .section{background:var(--section-bg);border-radius:10px;padding:18px 18px 22px;margin-bottom:18px;}
-    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-    .section-title{font-weight:700;font-size:16px;color:var(--text);margin:0;}
-    .gold-line{height:3px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:3px}
-    label{display:block;font-weight:600;margin:8px 0 6px;color:var(--text);font-size:0.95rem;}
-    .muted{color:var(--muted);font-size:0.92rem;margin-bottom:8px;display:block;}
-    input[type="text"], select, input[type="file"], textarea {
-      width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--input-border);background:#fff;font-size:1rem;
-    }
-    textarea{min-height:80px;resize:vertical}
-    .profile-photos{display:flex;gap:12px;align-items:center}
-    .photo-box{flex:1;display:flex;flex-direction:column;gap:8px}
-    .photo-thumb{width:120px;height:120px;border-radius:8px;border:3px solid var(--gold);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-    .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .photo-input{flex:1}
-    .file-row{display:flex;gap:12px}
-    .file-box{flex:1}
-    .file-group{display:flex;flex-direction:column;gap:10px}
-    .note{font-size:0.92rem;color:var(--muted);margin-top:6px}
-    .actions{margin-top:10px;display:flex;gap:12px;align-items:center}
-    button[type="submit"]{flex:1;padding:14px;border-radius:10px;background:var(--gold);border:0;color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
-    button.secondary{background:#eef2ff;color:#2b6cff;border:0;padding:12px;border-radius:10px;cursor:pointer}
-    button[disabled]{opacity:0.6;cursor:not-allowed}
-    @media (max-width:900px){
-      .profile-photos{flex-direction:row;flex-wrap:nowrap}
-      .file-row{flex-direction:column}
-      .photo-thumb{width:96px;height:96px}
-    }
-    .status{margin-left:8px;color:var(--muted);font-size:0.95rem}
-  </style>
+    <meta charset="UTF-8" />
+    <title>회원 정보 업로드 페이지</title>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <h1>회원 등록 신청</h1>
-    </header>
+    <h2>회원 정보 업로드</h2>
 
-    <div class="title-art" aria-hidden="true">
-      <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="웨딩 커플 실루엣">
-        <g transform="translate(10,8)" stroke="#D4AF37" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 68 C20 50 34 36 52 36 C70 36 84 50 84 68" />
-          <path d="M36 34 C36 22 48 14 54 14 C60 14 72 22 72 34" />
-        </g>
-      </svg>
-    </div>
+    <!-- 입력 폼 -->
+    <label>이름:</label><br>
+    <input type="text" id="nameInput" /><br><br>
 
-    <div class="card">
-      <form id="regForm" enctype="multipart/form-data" novalidate>
+    <label>간단한 소개:</label><br>
+    <textarea id="introInput" rows="4" cols="40"></textarea><br><br>
 
-        <!-- 기본정보 -->
-        <section class="section" aria-labelledby="sec-basic">
-          <div class="section-header">
-            <h3 id="sec-basic" class="section-title">기본정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
+    <button id="saveBtn">저장하기</button>
 
-          <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px">
-            <div class="photo-box" style="flex:0 0 140px">
-              <div class="photo-thumb" id="profileThumb">
-                <img id="profilePreview" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="프로필 미리보기">
-              </div>
-              <div class="note">※ 첫 번째 사진이 미리보기로 표시됩니다.</div>
-            </div>
+    <p id="resultText" style="color: green;"></p>
 
-            <div style="flex:1">
-              <label>프로필 사진 (3장)</label>
-              <div class="profile-photos">
-                <div class="photo-input"><input id="profile1" type="file" accept="image/*"></div>
-                <div class="photo-input"><input id="profile2" type="file" accept="image/*"></div>
-                <div class="photo-input"><input id="profile3" type="file" accept="image/*"></div>
-              </div>
-            </div>
-          </div>
+    <!-- Firebase CDN 스크립트 -->
+    <script type="module">
+        // Firebase SDK import (CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-          <label for="name">이름</label>
-          <input id="name" type="text" placeholder="이름을 입력하세요" required>
-
-          <label for="birth">생년월일 (YYYY-MM-DD)</label>
-          <input id="birth" type="text" placeholder="예: 1990-05-12" maxlength="10" required>
-
-          <label for="gender">성별</label>
-          <select id="gender" required>
-            <option value="">선택하세요</option>
-            <option value="남성">남성</option>
-            <option value="여성">여성</option>
-          </select>
-
-          <label for="job">직업</label>
-          <input id="job" type="text" placeholder="직업을 입력하세요">
-
-          <label for="address">거주지</label>
-          <input id="address" type="text" placeholder="예: 서울특별시 강남구">
-
-          <label for="phone">휴대폰 번호</label>
-          <input id="phone" type="text" placeholder="010-0000-0000" maxlength="13" required>
-        </section>
-
-        <!-- 신분정보 -->
-        <section class="section" aria-labelledby="sec-id">
-          <div class="section-header">
-            <h3 id="sec-id" class="section-title">신분정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
-
-          <label for="familyDoc">가족관계증명서</label>
-          <span class="muted">가족관계증명서 (상세, 정부24 발급)</span>
-          <div class="file-group">
-            <input id="familyDoc" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
-
-          <label for="marriageDoc">혼인관계증명서</label>
-          <span class="muted">혼인관계증명서 (상세, 정부24 발급)</span>
-          <div class="file-group">
-            <input id="marriageDoc" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
-
-          <label for="graduateDocs">졸업증명서 (예: 학사, 석사, 박사, 유학증명서 등)</label>
-          <span class="muted">졸업증명서 예시: 학사 / 석사 / 박사 / 유학증명서 등</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="grad1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="grad2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="grad3" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
-        </section>
-
-        <!-- 재산정보 -->
-        <section class="section" aria-labelledby="sec-asset">
-          <div class="section-header">
-            <h3 id="sec-asset" class="section-title">재산정보</h3>
-            <div class="gold-line" aria-hidden="true"></div>
-          </div>
-
-          <label>소득 관련 서류</label>
-          <span class="muted">원천징수영수증 또는 과세표준증명서 제출 (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-group" style="margin-top:8px">
-            <input id="income1" type="file" accept=".pdf,.jpg,.png,.jpeg">
-            <input id="income2" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
-
-          <label style="margin-top:12px">부동산 보유시 (등기부등본)</label>
-          <span class="muted">등기사항전부증명서 - 공동담보·매매목록·요약 포함 (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="prop1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="prop2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="prop3" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
-
-          <label style="margin-top:12px">차량 보유시 (차량등록원부)</label>
-          <span class="muted">(2개 이상일 경우 각각 첨부)</span>
-          <div class="file-row" style="margin-top:8px">
-            <div class="file-box"><input id="car1" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-            <div class="file-box"><input id="car2" type="file" accept=".pdf,.jpg,.png,.jpeg"></div>
-          </div>
-
-          <label style="margin-top:12px">기타 경제력 관련 서류</label>
-          <span class="muted">보유 자산 증빙 자료 (현금성 자산 등은 잔액 및 예금주 확인이 가능한 증빙자료 제출) (2개 이상일 경우 각각 첨부)</span>
-          <div class="file-group" style="margin-top:8px">
-            <input id="other1" type="file" accept=".pdf,.jpg,.png,.jpeg">
-            <input id="other2" type="file" accept=".pdf,.jpg,.png,.jpeg">
-          </div>
-        </section>
-
-        <div class="actions">
-          <button type="submit" id="submitBtn">제출하기</button>
-          <button type="button" id="clearDraft" class="secondary">초기화(초기상태)</button>
-          <span class="status" id="statusText"></span>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Firebase 및 기능 스크립트 -->
-  <script type="module">
-    // Firebase SDK (모듈 방식)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-    // ========== 여기에 당신의 Firebase 설정 붙여넣음 ==========
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
-      authDomain: "noble-wedding.firebaseapp.com",
-      projectId: "noble-wedding",
-      storageBucket: "noble-wedding.firebasestorage.app",
-      messagingSenderId: "242816725640",
-      appId: "1:242816725640:web:abc5dcfce08367789a653d",
-      measurementId: "G-67MYW2RRSJ"
-    };
-
-    // 초기화
-    const app = initializeApp(firebaseConfig);
-    try { getAnalytics(app); } catch(e){ /* analytics optional */ }
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    // 도우미 유틸: 파일 이름 안전화
-    function safeFileName(name){
-      return name.replace(/\s+/g,'_').replace(/[^\w.-]/g,'');
-    }
-
-    // 파일 업로드 (단일) - 반환: 업로드된 URL 또는 null
-    async function uploadFileIfExists(inputElem, storagePath){
-      const f = inputElem && inputElem.files && inputElem.files[0];
-      if(!f) return null;
-      const name = `${Date.now()}_${safeFileName(f.name)}`;
-      const ref = storageRef(storage, `${storagePath}/${name}`);
-      await uploadBytes(ref, f);
-      const url = await getDownloadURL(ref);
-      return url;
-    }
-
-    // 다중 파일 업로드: inputs 배열 -> urls 배열 (null 허용)
-    async function uploadMultiple(inputs, storagePath){
-      const urls = [];
-      for(const inp of inputs){
-        const f = inp && inp.files && inp.files[0];
-        if(!f){ urls.push(null); continue; }
-        const name = `${Date.now()}_${safeFileName(f.name)}`;
-        const ref = storageRef(storage, `${storagePath}/${name}`);
-        await uploadBytes(ref, f);
-        const url = await getDownloadURL(ref);
-        urls.push(url);
-      }
-      return urls;
-    }
-
-    // 폼 엘리먼트 참조
-    const form = document.getElementById('regForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const clearDraftBtn = document.getElementById('clearDraft');
-    const statusText = document.getElementById('statusText');
-
-    // 파일/필드 ID 목록 (폼과 일치)
-    const fieldIds = {
-      photos: ['profile1','profile2','profile3'],
-      familyDoc: 'familyDoc',
-      marriageDoc: 'marriageDoc',
-      gradDocs: ['grad1','grad2','grad3'],
-      incomeDocs: ['income1','income2'],
-      propDocs: ['prop1','prop2','prop3'],
-      carDocs: ['car1','car2'],
-      otherDocs: ['other1','other2']
-    };
-
-    // 로컬에 저장한 문서 ID key
-    const LOCAL_DOC_KEY = 'noble_member_doc_id';
-
-    // 로딩 상태 표시
-    function setStatus(msg){
-      statusText.textContent = msg || '';
-    }
-
-    // 페이지 로드 시: 이전에 저장한 문서가 있으면 불러와 폼 채우기 (수정 가능)
-    async function loadDraftIfExists(){
-      const id = localStorage.getItem(LOCAL_DOC_KEY);
-      if(!id) { setStatus('새로운 등록입니다.'); return null; }
-      setStatus('이전에 저장된 데이터 불러오는 중...');
-      try{
-        const ref = doc(db, 'members', id);
-        const snap = await getDoc(ref);
-        if(!snap.exists()){ localStorage.removeItem(LOCAL_DOC_KEY); setStatus('이전에 저장된 데이터가 없습니다.'); return null; }
-        const data = snap.data();
-
-        // 폼에 채우기 (간단 텍스트 필드들)
-        if(data.name) document.getElementById('name').value = data.name;
-        if(data.birth) document.getElementById('birth').value = data.birth;
-        if(data.gender) document.getElementById('gender').value = data.gender;
-        if(data.job) document.getElementById('job').value = data.job;
-        if(data.address) document.getElementById('address').value = data.address;
-        if(data.phone) document.getElementById('phone').value = data.phone;
-
-        // 사진 미리보기(첫 번째 사진)
-        if(data.photos && data.photos[0]) document.getElementById('profilePreview').src = data.photos[0];
-
-        setStatus('로컬에 저장된 데이터를 불러왔습니다. 필요한 항목만 수정하세요. 제출하면 업데이트됩니다.');
-        return { id, data };
-      }catch(err){
-        console.error(err);
-        setStatus('기존 데이터를 불러오던 중 오류가 발생했습니다.');
-        return null;
-      }
-    }
-
-    // 초기 실행: 불러오기 시도
-    let loadedDraft = null;
-    (async ()=>{ loadedDraft = await loadDraftIfExists(); })();
-
-    // 제출 처리 (추가/수정 둘 다 처리)
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = '저장 중...';
-      setStatus('저장 진행 중입니다. 완료될 때까지 기다려주세요.');
-
-      try{
-        // 필수 체크
-        const name = document.getElementById('name').value.trim();
-        if(!name){ alert('이름을 입력해주세요.'); submitBtn.disabled=false; submitBtn.textContent='제출하기'; setStatus(''); return; }
-
-        // 텍스트 필드
-        const birth = document.getElementById('birth').value.trim();
-        const gender = document.getElementById('gender').value || '';
-        const job = document.getElementById('job').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-
-        // 기존 문서(수정)일 경우 기존 데이터 가져오기
-        let existing = null;
-        let docId = localStorage.getItem(LOCAL_DOC_KEY) || (loadedDraft && loadedDraft.id) || null;
-        if(docId){
-          const snap = await getDoc(doc(db, 'members', docId));
-          if(snap.exists()) existing = snap.data();
-        }
-
-        // -------------------
-        // 파일 업로드 로직:
-        // - 기존에 저장된 URL이 있으면 기본값으로 유지
-        // - 사용자가 새로운 파일을 선택하면 그 파일만 업로드 후 URL로 교체
-        // -------------------
-
-        // photos (3장)
-        const photoInputs = fieldIds.photos.map(id=>document.getElementById(id));
-        // start with existing urls (or null)
-        const existingPhotos = (existing && existing.photos) ? existing.photos.slice(0,3) : [null,null,null];
-        // upload new ones and merge
-        const newPhotoUrls = existingPhotos.slice();
-        for(let i=0;i<photoInputs.length;i++){
-          const inp = photoInputs[i];
-          if(inp && inp.files && inp.files[0]){
-            const uploaded = await uploadFileIfExists(inp, `members/${safeFileName(name)}/photos`);
-            newPhotoUrls[i] = uploaded;
-          }
-        }
-
-        // 단일 파일들
-        const familyDocUrl = (document.getElementById(fieldIds.familyDoc).files.length>0) ?
-                              await uploadFileIfExists(document.getElementById(fieldIds.familyDoc), `members/${safeFileName(name)}/docs`)
-                              : (existing && existing.familyDoc) || null;
-        const marriageDocUrl = (document.getElementById(fieldIds.marriageDoc).files.length>0) ?
-                              await uploadFileIfExists(document.getElementById(fieldIds.marriageDoc), `members/${safeFileName(name)}/docs`)
-                              : (existing && existing.marriageDoc) || null;
-
-        // 배열 파일들 (졸업/소득/부동산/차량/기타)
-        async function handleArrayUpload(inputIds, storageSubpath, existingArray){
-          const inputs = inputIds.map(id => document.getElementById(id));
-          const out = (existingArray && Array.isArray(existingArray)) ? existingArray.slice(0, inputs.length) : inputs.map(()=>null);
-          for(let i=0;i<inputs.length;i++){
-            if(inputs[i] && inputs[i].files && inputs[i].files[0]){
-              const uploaded = await uploadFileIfExists(inputs[i], storageSubpath);
-              out[i] = uploaded;
-            }
-          }
-          return out;
-        }
-
-        const gradDocs = await handleArrayUpload(fieldIds.gradDocs, `members/${safeFileName(name)}/docs`, existing && existing.gradDocs);
-        const incomeDocs = await handleArrayUpload(fieldIds.incomeDocs, `members/${safeFileName(name)}/asset`, existing && existing.incomeDocs);
-        const propDocs = await handleArrayUpload(fieldIds.propDocs, `members/${safeFileName(name)}/asset`, existing && existing.propDocs);
-        const carDocs = await handleArrayUpload(fieldIds.carDocs, `members/${safeFileName(name)}/asset`, existing && existing.carDocs);
-        const otherDocs = await handleArrayUpload(fieldIds.otherDocs, `members/${safeFileName(name)}/asset`, existing && existing.otherDocs);
-
-        // Firestore에 저장할 객체 준비
-        const payload = {
-          name,
-          birth,
-          gender,
-          job,
-          address,
-          phone,
-          photos: newPhotoUrls,
-          familyDoc: familyDocUrl || null,
-          marriageDoc: marriageDocUrl || null,
-          gradDocs,
-          incomeDocs,
-          propDocs,
-          carDocs,
-          otherDocs,
-          status: "submitted",
-          updatedAt: serverTimestamp()
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+            authDomain: "noble-wedding.firebaseapp.com",
+            projectId: "noble-wedding",
+            storageBucket: "noble-wedding.firebasestorage.app",
+            messagingSenderId: "242816725640",
+            appId: "1:242816725640:web:abc5dcfce08367789a653d",
+            measurementId: "G-67MYW2RRSJ"
         };
 
-        // create or update
-        if(docId && existing){
-          // 업데이트
-          await updateDoc(doc(db, 'members', docId), payload);
-          setStatus('수정이 저장되었습니다. (업데이트 완료)');
-          alert('회원 정보가 업데이트되었습니다.');
-        } else {
-          // 새로 생성
-          const ref = await addDoc(collection(db, 'members'), {
-            ...payload,
-            createdAt: serverTimestamp()
-          });
-          docId = ref.id;
-          localStorage.setItem(LOCAL_DOC_KEY, docId);
-          setStatus('저장되었습니다. (새 문서 생성)');
-          alert('제출이 완료되었습니다. (ID: ' + ref.id + ')');
-        }
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // 제출 후 간단 초기화(단, 로컬 draft id는 남김 - 수정 가능)
-        // 필요하면 폼을 완전히 비우고 싶다고 알려줘. 지금은 기존 입력값 유지(관리자가 확인 후 삭제 가능).
-        submitBtn.disabled = false;
-        submitBtn.textContent = '제출하기';
+        console.log("Firebase + Firestore 연결 성공!");
 
-      }catch(err){
-        console.error(err);
-        alert('저장 중 오류가 발생했습니다. 콘솔을 확인하세요.');
-        setStatus('오류 발생. 콘솔 확인.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '제출하기';
-      }
-    });
+        // 저장 버튼 클릭 시 Firestore 저장
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+            const nameValue = document.getElementById("nameInput").value;
+            const introValue = document.getElementById("introInput").value;
 
-    // 프로필 1 미리보기 (사용자가 새 이미지 선택하면 바로 미리보기)
-    document.getElementById('profile1').addEventListener('change', function(e){
-      const f = e.target.files && e.target.files[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = function(ev){ document.getElementById('profilePreview').src = ev.target.result; };
-      reader.readAsDataURL(f);
-    });
+            if (nameValue.trim() === "") {
+                alert("이름은 반드시 입력해야 합니다!");
+                return;
+            }
 
-    // 초기화 버튼: 로컬 draft ID 지우고 새로 시작
-    clearDraftBtn.addEventListener('click', ()=>{
-      if(confirm('로컬에 저장된 이전 문서 ID를 삭제하고 새로 시작하시겠어요?')){
-        localStorage.removeItem(LOCAL_DOC_KEY);
-        location.reload();
-      }
-    });
+            try {
+                // Firestore에 데이터 저장
+                await addDoc(collection(db, "members"), {
+                    name: nameValue,
+                    intro: introValue,
+                    createdAt: new Date()
+                });
 
-    // 입력 형식 자동 하이픈 (생년월일/전화)
-    function formatBirth(val){
-      const digits = val.replace(/\D/g,'').slice(0,8);
-      if(digits.length <=4) return digits;
-      if(digits.length <=6) return digits.slice(0,4) + '-' + digits.slice(4);
-      return digits.slice(0,4) + '-' + digits.slice(4,6) + '-' + digits.slice(6,8);
-    }
-    function formatPhone(val){
-      const digits = val.replace(/\D/g,'').slice(0,11);
-      if(digits.length <=3) return digits;
-      if(digits.length <=7) return digits.slice(0,3) + '-' + digits.slice(3);
-      return digits.slice(0,3) + '-' + digits.slice(3,7) + '-' + digits.slice(7,11);
-    }
-    document.getElementById('birth').addEventListener('input', function(e){ this.value = formatBirth(this.value); }, false);
-    document.getElementById('phone').addEventListener('input', function(e){ this.value = formatPhone(this.value); }, false);
+                console.log("Firestore 저장 성공!");
+                document.getElementById("resultText").innerText = "저장이 완료되었습니다!";
 
-  </script>
+                // 입력창 초기화
+                document.getElementById("nameInput").value = "";
+                document.getElementById("introInput").value = "";
+
+            } catch (error) {
+                console.error("Firestore 저장 실패:", error);
+                alert("저장 중 오류가 발생했습니다!");
+            }
+        });
+    </script>
 </body>
 </html>
