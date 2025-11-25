@@ -1,117 +1,135 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>노블웨딩 | 회원 등록 신청</title>
-  <meta name="description" content="노블웨딩 회원 등록 신청 폼 - 신원 및 서류 업로드" />
-  <style>
-    :root{
-      --page-bg: #fbf8f5;
-      --card-bg: #ffffff;
-      --section-bg: #fff8f2;
-      --text: #222;
-      --muted: #6f6f6f;
-      --gold: #d4af37;
-      --gold-dark: #b8962d;
-      --input-border: #e7e3dd;
-      --radius: 12px;
-      --max-width: 980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: "Noto Sans KR", "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--page-bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      padding:36px 18px;
-      line-height:1.6;
-    }
-    .wrap{max-width:var(--max-width);margin:0 auto;}
-    header{ text-align:center;margin-bottom:6px; }
-    h1{ margin:0;font-size:26px;font-weight:800;color:#2b2b2b; }
-    .title-art{display:flex;justify-content:center;margin:12px 0 20px;}
-    .title-art svg{ width:160px;height:auto; display:block; }
-    .card{background:var(--card-bg);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(10,10,10,0.06);}
-    form{display:block;}
-    .section{background:var(--section-bg);border-radius:10px;padding:18px 18px 22px;margin-bottom:18px;}
-    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-    .section-title{font-weight:700;font-size:16px;color:var(--text);margin:0;}
-    .gold-line{height:3px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:3px}
-    label{display:block;font-weight:600;margin:8px 0 6px;color:var(--text);font-size:0.95rem;}
-    .muted{color:var(--muted);font-size:0.92rem;margin-bottom:8px;display:block;}
-    input[type="text"], select, input[type="file"], textarea {
-      width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--input-border);background:#fff;font-size:1rem;
-    }
-    textarea{min-height:80px;resize:vertical}
-    .profile-photos{display:flex;gap:12px;align-items:center}
-    .photo-box{flex:1;display:flex;flex-direction:column;gap:8px}
-    .photo-thumb{width:120px;height:120px;border-radius:8px;border:3px solid var(--gold);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-    .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .photo-input{flex:1}
-    .file-row{display:flex;gap:12px}
-    .file-box{flex:1}
-    .file-group{display:flex;flex-direction:column;gap:10px}
-    .note{font-size:0.92rem;color:var(--muted);margin-top:6px}
-    .actions{margin-top:10px;display:flex;gap:12px;align-items:center}
-    button[type="submit"]{flex:1;padding:14px;border-radius:10px;background:var(--gold);border:0;color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
-    button.secondary{background:#eef2ff;color:#2b6cff;border:0;padding:12px;border-radius:10px;cursor:pointer}
-    button[disabled]{opacity:0.6;cursor:not-allowed}
-    @media (max-width:900px){
-      .profile-photos{flex-direction:row;flex-wrap:nowrap}
-      .file-row{flex-direction:column}
-      .photo-thumb{width:96px;height:96px}
-    }
-    .status{margin-left:8px;color:var(--muted);font-size:0.95rem}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원 정보 입력</title>
+    <style>
+        body { max-width: 600px; margin: 20px auto; font-family: Arial; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select, textarea {
+            width: 100%; padding: 8px; margin-top: 5px;
+            border: 1px solid #ccc; border-radius: 5px;
+        }
+        button {
+            margin-top: 20px; padding: 12px;
+            width: 100%; font-size: 16px;
+            background-color: #1976d2; color: white;
+            border: none; border-radius: 5px; cursor: pointer;
+        }
+        #loading { display: none; margin-top: 10px; color: #d32f2f; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>회원 등록 신청</h1>
-    </header>
 
-    <div class="title-art" aria-hidden="true">
-      <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="웨딩 커플 실루엣">
-        <g transform="translate(10,8)" stroke="#D4AF37" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 68 C20 50 34 36 52 36 C70 36 84 50 84 68" />
-          <path d="M36 34 C36 22 48 14 54 14 C60 14 72 22 72 34" />
-        </g>
-      </svg>
-    </div>
+    <h2>회원 정보 입력</h2>
 
-    <div class="card">
-      <form id="regForm" enctype="multipart/form-data" novalidate>
-        <!-- 기존 폼 내용 동일, 생략(위 코드와 동일) -->
-      </form>
-    </div>
-  </div>
+    <form id="memberForm">
 
-  <!-- Firebase 및 기능 스크립트 (CDN 버전) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+        <label>이름</label>
+        <input type="text" id="name" required />
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
-      authDomain: "noble-wedding.firebaseapp.com",
-      projectId: "noble-wedding",
-      storageBucket: "noble-wedding.firebasestorage.app",
-      messagingSenderId: "242816725640",
-      appId: "1:242816725640:web:abc5dcfce08367789a653d",
-      measurementId: "G-67MYW2RRSJ"
-    };
+        <label>연락처</label>
+        <input type="text" id="phone" placeholder="010-1234-5678" required />
 
-    const app = initializeApp(firebaseConfig);
-    try { getAnalytics(app); } catch(e){ /* analytics optional */ }
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+        <label>주소</label>
+        <input type="text" id="address" required />
 
-    // 이하 기존 index.html JS 내용 그대로 유지
-    // 파일 업로드, draft 불러오기, 폼 제출, 사진 미리보기, 하이픈 자동입력 등
-  </script>
+        <label>이메일</label>
+        <input type="email" id="email" required />
+
+        <label>직업</label>
+        <input type="text" id="job" />
+
+        <label>학력</label>
+        <input type="text" id="education" />
+
+        <label>재산 정보 (선택)</label>
+        <textarea id="assets" rows="3"></textarea>
+
+        <label>졸업증명서 파일 업로드</label>
+        <input type="file" id="gradFile" accept=".pdf,.jpg,.png" />
+
+        <label>기타 증빙서류 업로드</label>
+        <input type="file" id="extraFile" accept=".pdf,.jpg,.png" />
+
+        <button type="submit">제출하기</button>
+    </form>
+
+    <div id="loading">저장 중입니다. 잠시만 기다려주세요...</div>
+
+    <!-- Firebase CDN -->
+    <script type="module">
+        // --- Firebase SDK 불러오기 (CDN 버전) ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+
+        // --- Firebase 설정 ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
+            authDomain: "noble-wedding.firebaseapp.com",
+            projectId: "noble-wedding",
+            storageBucket: "noble-wedding.firebasestorage.app",
+            messagingSenderId: "242816725640",
+            appId: "1:242816725640:web:abc5dcfce08367789a653d",
+            measurementId: "G-67MYW2RRSJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        const form = document.getElementById("memberForm");
+        const loading = document.getElementById("loading");
+
+        // 전화번호 자동 하이픈
+        document.getElementById("phone").addEventListener("input", function(e) {
+            let v = e.target.value.replace(/[^0-9]/g, "");
+            if (v.length > 3 && v.length <= 7) v = v.replace(/(\d{3})(\d+)/, "$1-$2");
+            else if (v.length > 7) v = v.replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+            e.target.value = v;
+        });
+
+        // 파일 업로드 함수
+        async function uploadIfExists(file, path) {
+            if (!file) return "";
+            const storageRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
+            await uploadBytes(storageRef, file);
+            return await getDownloadURL(storageRef);
+        }
+
+        // 제출 기능
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            loading.style.display = "block";
+
+            try {
+                const gradUrl = await uploadIfExists(document.getElementById("gradFile").files[0], "graduation");
+                const extraUrl = await uploadIfExists(document.getElementById("extraFile").files[0], "extra");
+
+                await addDoc(collection(db, "members"), {
+                    name: document.getElementById("name").value,
+                    phone: document.getElementById("phone").value,
+                    address: document.getElementById("address").value,
+                    email: document.getElementById("email").value,
+                    job: document.getElementById("job").value,
+                    education: document.getElementById("education").value,
+                    assets: document.getElementById("assets").value,
+                    gradFileUrl: gradUrl,
+                    extraFileUrl: extraUrl,
+                    createdAt: serverTimestamp()
+                });
+
+                alert("정상적으로 저장되었습니다!");
+                form.reset();
+            } catch (err) {
+                console.error(err);
+                alert("저장 중 오류가 발생했습니다.");
+            }
+
+            loading.style.display = "none";
+        });
+    </script>
 </body>
 </html>
