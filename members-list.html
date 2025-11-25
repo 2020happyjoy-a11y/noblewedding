@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원 리스트 - 관리자</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 30px; }
-        h1 { text-align: center; }
-        .container { max-width: 980px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .filters { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        select, button, input { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; }
-        .member-box { border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; background: #fafafa; }
-        .member-box:hover { background: #eef3ff; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원 리스트 - 관리자</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin:0; padding:30px;}
+h1 { text-align: center;}
+.container { max-width:980px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+.filters { margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px;}
+select, button, input { padding:8px 12px; border-radius:6px; border:1px solid #ccc;}
+.member-box { border:1px solid #ddd; padding:12px; margin-bottom:10px; border-radius:6px; cursor:pointer; background:#fafafa;}
+.member-box:hover { background:#eef3ff;}
+</style>
 </head>
 <body>
 <h1>회원 리스트</h1>
 <div class="container">
     <div class="filters">
-        <!-- 성별 필터 -->
-        <select id="genderFilter">
-            <option value="">성별 전체</option>
-            <option value="남성">남성</option>
-            <option value="여성">여성</option>
-        </select>
+        <select id="genderFilter"><option value="">성별 전체</option><option value="남성">남성</option><option value="여성">여성</option></select>
+        <select id="ageFilter"><option value="">나이 전체</option><option value="20">20대</option><option value="30">30대</option><option value="40">40대</option><option value="50">50대</option></select>
+        <select id="heightFilter"><option value="">키 전체</option><option value="160">160cm 이상</option><option value="170">170cm 이상</option><option value="180">180cm 이상</option></select>
+        <input id="regionFilter" type="text" placeholder="지역 입력"/>
+        <input id="jobFilter" type="text" placeholder="직업 입력"/>
         <button onclick="applyFilters()">필터 적용</button>
     </div>
     <div id="memberList"><p>불러오는 중...</p></div>
@@ -33,7 +32,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyAfWEFCYDB9UQ-NktaR-CkjQGXOxPc6lMY",
   authDomain: "noble-wedding.firebaseapp.com",
@@ -46,48 +44,47 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 회원 불러오기
 async function loadMembers(filters={}) {
     const listBox = document.getElementById("memberList");
-    listBox.innerHTML = "<p>불러오는 중...</p>";
+    listBox.innerHTML="<p>불러오는 중...</p>";
     try {
-        let col = collection(db, "members");
+        let col = collection(db,"members");
         let q = col;
 
-        // 성별 필터
-        if(filters.gender) q = query(col, where("gender", "==", filters.gender));
+        if(filters.gender) q = query(col, where("gender","==",filters.gender));
+        if(filters.age){
+            const minAge = Number(filters.age);
+            const maxAge = minAge+9;
+            q = query(col, where("age",">=",minAge), where("age","<=",maxAge));
+        }
+        if(filters.height) q = query(col, where("height",">=",Number(filters.height)));
+        if(filters.region) q = query(col, where("region","==",filters.region));
+        if(filters.job) q = query(col, where("job","==",filters.job));
 
         const snapshot = await getDocs(q);
-        if(snapshot.empty){ listBox.innerHTML="<p>회원이 없습니다.</p>"; return; }
+        if(snapshot.empty){ listBox.innerHTML="<p>조건에 맞는 회원이 없습니다.</p>"; return; }
 
         listBox.innerHTML="";
-        snapshot.forEach(doc => {
-            const data = doc.data();
+        snapshot.forEach(doc=>{
+            const m = doc.data();
             const box = document.createElement("div");
             box.className="member-box";
-            box.onclick = ()=>{ window.location.href=`members.html?id=${doc.id}`; };
-            box.innerHTML=`
-                <strong>${data.name || ""}</strong> (${data.gender || "?"})<br>
-                생년월일: ${data.birth || "-"}<br>
-                직업: ${data.job || "-"}<br>
-                거주지: ${data.address || "-"}<br>
-                연락처: ${data.phone || "-"}
-            `;
+            box.onclick=()=>{ window.location.href=`members.html?id=${doc.id}`; };
+            box.innerHTML=`<strong>${m.name||""}</strong> (${m.gender||"?"})<br>생년월일: ${m.birth||"-"}<br>직업: ${m.job||"-"}<br>거주지: ${m.address||"-"}<br>연락처: ${m.phone||"-"}`;
             listBox.appendChild(box);
         });
-    } catch(err){
-        console.error(err);
-        listBox.innerHTML="<p style='color:red;'>불러오는 중 오류 발생</p>";
-    }
+    } catch(e){ console.error(e); listBox.innerHTML="<p style='color:red;'>데이터 불러오기 오류</p>"; }
 }
 
-// 필터 적용
 function applyFilters(){
-    const gender = document.getElementById("genderFilter").value;
-    loadMembers({gender});
+    const gender=document.getElementById("genderFilter").value;
+    const age=document.getElementById("ageFilter").value;
+    const height=document.getElementById("heightFilter").value;
+    const region=document.getElementById("regionFilter").value.trim();
+    const job=document.getElementById("jobFilter").value.trim();
+    loadMembers({gender,age,height,region,job});
 }
 
-// 초기 로딩
 loadMembers();
 </script>
 </body>
